@@ -18,14 +18,13 @@ class Blog(db.Model):
         self.title = title
         self.post = post
 
-@app.route('/', methods=['POST', 'GET'])
-def display_blog():
-    return render_template('blog.html')
 
 @app.route('/blog', methods=['POST', 'GET'])
 def display_all_posts():
     all_posts = Blog.query.all()
     return render_template('blog.html', posts=all_posts)
+
+
 
 def is_empty(x):
     if len(x) == 0:
@@ -33,39 +32,46 @@ def is_empty(x):
     else:
         return False
 
+
+@app.route('/newpost')
+def make_new_post():
+    return render_template('newpost.html')
+
 @app.route('/newpost', methods=['GET', 'POST'])
 def add_entry():
 
-    if request.method == 'POST':
-        title_error = ''
-        blog_entry_error = ''
+   # if request.method == 'POST':
+    title_error = ''
+    blog_entry_error = ''
 
-        post_title = request.form['blog_title']
-        post_entry = request.form['blog_post']
-        new_post = Blog(post_title, post_entry)
+    post_title = request.form['blog_title']
+    post_entry = request.form['blog_post']
+    new_post = Blog(post_title, post_entry)
 
-        if not is_empty(post_title) and not is_empty(post_entry):
-            db.session.add(new_post)
-            db.session.commit()
-            post_link = "/blog?id=" + str(new_post.id)
-            return redirect(post_link)
-        else:
-            if is_empty(post_title) and is_empty(post_entry):
-                title_error = "Text for blog title is missing."
-                blog_entry_error = "Text for blog entry is missing."
-                return render_template('newpost.html', title_error=title_error, blog_entry_error=blog_entry_error)
-            elif is_empty(post_title):
-                title_error = "Text for blog title is missing."
-                return render_template('newpost.html', title_error=title_error, post_entry=post_entry)
-            elif is_empty(post_entry):
-                blog_entry_error = "Text for blog entry is missing."
-                return render_template('newpost.html', blog_entry_error=blog_entry_error, post_title=post_title)
+    if not is_empty(post_title) and not is_empty(post_entry):
+        db.session.add(new_post)
+        db.session.commit()
+        post_link = "/blog?id=" + str(new_post.id)
+        return redirect(post_link)
+    else:
+        if is_empty(post_title) and is_empty(post_entry):
+            title_error = "Text for blog title is missing."
+            blog_entry_error = "Text for blog entry is missing."
+            return render_template('newpost.html', title_error=title_error, blog_entry_error=blog_entry_error)
+        elif is_empty(post_title) and not is_empty(post_entry):
+            title_error = "Text for blog title is missing."
+            return render_template('newpost.html', title_error=title_error, post_entry=post_entry)
+        elif is_empty(post_entry) and not is_empty(post_title):
+            blog_entry_error = "Text for blog entry is missing."
+            return render_template('newpost.html', blog_entry_error=blog_entry_error, post_title=post_title)
 
-    else: 
-        return render_template('newpost.html')
+    #else: 
+    return render_template('newpost.html')
     
 
-
+@app.route('/', methods=['POST', 'GET'])
+def display_blog():
+    return render_template('blog.html')
 
 
 if __name__ == '__main__':
