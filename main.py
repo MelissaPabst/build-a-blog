@@ -19,11 +19,20 @@ class Blog(db.Model):
         self.post = post
 
 
-@app.route('/blog', methods=['POST', 'GET'])
-def display_all_posts():
-    all_posts = Blog.query.all()
-    return render_template('blog.html', posts=all_posts)
+#@app.route('/blog', methods=['POST', 'GET'])
+#def display_all_posts():
+    #all_posts = Blog.query.all()
+    #return render_template('blog.html', posts=all_posts)
 
+@app.route('/blog')
+def display_indv_post():
+    post_id = request.args.get('id')
+    if (post_id):
+        indv_post = Blog.query.get(post_id)
+        return render_template('ind_post.html', ind_post=ind_post)
+    else:
+        all_posts = Blog.query.all()
+        return render_template('blog.html', posts=all_posts)
 
 
 def is_empty(x):
