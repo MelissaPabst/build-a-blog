@@ -29,7 +29,7 @@ def display_indv_post():
     post_id = request.args.get('id')
     if (post_id):
         indv_post = Blog.query.get(post_id)
-        return render_template('ind_post.html', ind_post=ind_post)
+        return render_template('indvpost.html', indv_post=indv_post)
     else:
         all_posts = Blog.query.all()
         return render_template('blog.html', posts=all_posts)
